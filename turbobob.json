@@ -1,0 +1,36 @@
+{
+	"for_description_of_this_file_see": "https://github.com/function61/turbobob",
+	"version_major": 1,
+	"project_name": "certbus",
+	"builders": [
+		{
+			"name": "default",
+			"uses": "docker://fn61/buildkit-golang:20200212_0907_06f93bc3",
+			"mount_source": "",
+			"mount_destination": "/workspace",
+			"workdir": "/workspace",
+			"commands": {
+				"build": ["bin/build.sh"],
+				"dev": ["bash"]
+			}
+		},
+		{
+			"name": "publisher",
+			"uses": "docker://fn61/buildkit-publisher:20190206_1058_d35b3939",
+			"mount_destination": "/workspace",
+			"commands": {
+				"publish": ["publish.sh", "rel/*"],
+				"dev": ["bash"]
+			},
+			"env": {
+				"BINTRAY_PROJECT": "function61/dl/certbus"
+			},
+			"pass_envs": [
+				"BINTRAY_CREDS"
+			]
+		}
+	],
+	"os_arches": {
+		"linux-amd64": true
+	}
+}
