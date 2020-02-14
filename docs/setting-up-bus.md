@@ -55,6 +55,11 @@ NOTE: you should probably restrict write access from CertBus-loadbalancers (sinc
 Bootstrap EventHorizon
 ----------------------
 
+From this point on, you have to have these ENV vars defined for your AWS API keys:
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+
 Run this to bootstrap EventHorizon:
 
 ```console

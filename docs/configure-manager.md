@@ -59,6 +59,16 @@ $ openssl rsa -in loadbalancer.key -outform PEM -pubout -out loadbalancer.pub
 Create manager's configuration
 ------------------------------
 
+From this point on, you will have to have have the AWS credentials as ENV variables defined
+(as advised in the bus set-up tutorial). You now also have to define:
+
+```console
+export EVENTHORIZON_TENANT=prod:1
+```
+
+(`1` is tenant #1 - it's just the default tenant number which you don't need to customize
+unless you're running in multi-tenant mode)
+
 This configuration will contain:
 
 - LetsEncrypt credentials
