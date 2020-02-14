@@ -3,6 +3,7 @@ package cbexampleserver
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
 	"github.com/function61/certbus/pkg/certbus"
 	"github.com/function61/eventhorizon/pkg/ehreader"
 	"github.com/function61/gokit/logex"
@@ -16,8 +17,9 @@ import (
 
 func Entrypoint() *cobra.Command {
 	return &cobra.Command{
-		Use:  "example-server",
-		Args: cobra.NoArgs,
+		Use:   "example-server",
+		Short: "Start demo HTTPS server that demos CertBus integration",
+		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			rootLogger := logex.StandardLogger()
 			if err := exampleServer(ossignal.InterruptOrTerminateBackgroundCtx(rootLogger), rootLogger); err != nil {
@@ -43,8 +45,14 @@ func exampleServer(ctx context.Context, logger *log.Logger) error {
 		return err
 	}
 
+	routes := http.NewServeMux()
+	routes.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		fmt.Fprintf(w, "greetings from %s\n", req.URL.Path)
+	})
+
 	srv := &http.Server{
-		Addr: ":443",
+		Addr:    ":443",
+		Handler: routes,
 		TLSConfig: &tls.Config{
 			// this integrates CertBus into your server - certificates are fetched
 			// dynamically from CertBus's dynamically managed state
@@ -59,7 +67,7 @@ func exampleServer(ctx context.Context, logger *log.Logger) error {
 		return certBus.Synchronizer(ctx)
 	})
 
-	tasks.Start("http server", func(_ context.Context, _ string) error {
+	tasks.Start("http server (https://localhost)", func(_ context.Context, _ string) error {
 		return removeGracefulServerClosedError(srv.ListenAndServeTLS("", ""))
 	})
 
