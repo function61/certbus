@@ -18,9 +18,10 @@ Create DynamoDB table for EventHorizon
 --------------------------------------
 
 Create DynamoDB table in `eu-central-1` (currently the region is hardcoded..)
-    * Name = `prod_eh_events`
-    * Primary key = `s` (type: string)
-    * Add sort key, name = `v` (type: number)
+
+- Name = `prod_eh_events`
+- Primary key = `s` (type: string)
+- Add sort key, name = `v` (type: number)
 
 
 Create IAM policy for EventHorizon
@@ -57,7 +58,7 @@ Bootstrap EventHorizon
 Run this to bootstrap EventHorizon:
 
 ```console
-$ certbus eh bootstrap
+$ certbus eh-prod bootstrap
 ```
 
 This created basic internal data structures for EventHorizon.
@@ -74,7 +75,7 @@ That's all you need to know for now. You probably won't need that feature, and w
 you tenant 1. Create stream for tenant 1:
 
 ```console
-$ certbus eh stream-create / t-1
+$ certbus eh-prod stream-create / t-1
 ```
 
 
@@ -84,5 +85,5 @@ Create CertBus stream for your CertBus tenant
 Now create CertBus stream for tenant 1:
 
 ```console
-$ certbus eh stream-create /t-1 certbus
+$ certbus eh-prod stream-create /t-1 certbus
 ```

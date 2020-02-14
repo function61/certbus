@@ -18,13 +18,9 @@ func main() {
 		Version: dynversion.Version,
 	}
 
-	app.AddCommand(listEntry())
-	app.AddCommand(newEntry())
-	app.AddCommand(inspectEntry())
-	app.AddCommand(removeEntry())
-	app.AddCommand(renewableEntry())
-	app.AddCommand(configUpdateEntry())
-	app.AddCommand(configDisplayEntry())
+	app.AddCommand(certSubcommandsEntry())
+
+	app.AddCommand(configSubcommandsEntry())
 
 	// Event Horizon administration
 	for _, cmd := range ehcli.Entrypoints() {
@@ -39,9 +35,14 @@ func main() {
 	}
 }
 
-func configUpdateEntry() *cobra.Command {
-	return &cobra.Command{
-		Use:   "conf-update",
+func configSubcommandsEntry() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "conf",
+		Short: "Configuration subcommands",
+	}
+
+	cmd.AddCommand(&cobra.Command{
+		Use:   "update",
 		Short: "Update configuration on the event bus",
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
@@ -49,25 +50,40 @@ func configUpdateEntry() *cobra.Command {
 				panic(err)
 			}
 		},
-	}
-}
+	})
 
-func configDisplayEntry() *cobra.Command {
-	return &cobra.Command{
-		Use:   "conf-display",
-		Short: "Fetch configuration from the event bus",
+	cmd.AddCommand(&cobra.Command{
+		Use:   "display",
+		Short: "Fetch configuration from the event bus (warning: shows secrets)",
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := displayConfig(ossignal.InterruptOrTerminateBackgroundCtx(nil), os.Stdout); err != nil {
 				panic(err)
 			}
 		},
+	})
+
+	return cmd
+}
+
+func certSubcommandsEntry() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "cert",
+		Short: "Certificate management subcommands",
 	}
+
+	cmd.AddCommand(listEntry())
+	cmd.AddCommand(newEntry())
+	cmd.AddCommand(inspectEntry())
+	cmd.AddCommand(renewableEntry())
+	cmd.AddCommand(removeEntry())
+
+	return cmd
 }
 
 func listEntry() *cobra.Command {
 	return &cobra.Command{
-		Use:   "cert-list",
+		Use:   "ls",
 		Short: "List certificates",
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
@@ -82,7 +98,7 @@ func newEntry() *cobra.Command {
 	wildcard := false
 
 	cmd := &cobra.Command{
-		Use:   "cert-new [domain]",
+		Use:   "mk [domain]",
 		Short: "Issue new certificate",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
@@ -104,7 +120,7 @@ func newEntry() *cobra.Command {
 
 func inspectEntry() *cobra.Command {
 	return &cobra.Command{
-		Use:   "cert-inspect [id]",
+		Use:   "cat [id]",
 		Short: "Inspect a certificate",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
@@ -119,7 +135,7 @@ func renewableEntry() *cobra.Command {
 	renewFirst := false
 
 	cmd := &cobra.Command{
-		Use:   "cert-renewable",
+		Use:   "renewable",
 		Short: "List renewable certs",
 		Args:  cobra.MaximumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
@@ -145,7 +161,7 @@ func renewableEntry() *cobra.Command {
 
 func removeEntry() *cobra.Command {
 	return &cobra.Command{
-		Use:   "cert-remove [id]",
+		Use:   "rm [id]",
 		Short: "Remove a certificate (will also not get automatically renewed)",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {

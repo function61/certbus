@@ -96,7 +96,7 @@ NOTE: `kek_public_key` is your `loadbalancer.pub` content (**and NOT the manager
 Then upload this to the bus:
 
 ```
-$ certbus conf-update < config-temp.json
+$ certbus conf update < config-temp.json
 ```
 
 Test (`conf-display`) that the config is readable, and then as cleanup remove the temp file
@@ -115,7 +115,7 @@ Testing that configuration is readable
 Run this:
 
 ```console
-$ certbus conf-display
+$ certbus conf display
 ```
 
 

@@ -83,7 +83,7 @@ Let's run through a certificate management lifecycle:
 - Remove
 
 ```console
-$ certbus cert-new --wildcard yourdomain.com
+$ certbus cert mk --wildcard yourdomain.com
 ```
 
 (if you don't use `--wildcard`, you'll get cert assigned for `yourdomain.com, www.yourdomain.com`)
@@ -91,19 +91,19 @@ $ certbus cert-new --wildcard yourdomain.com
 Now check that the certificate exists:
 
 ```console
-$ certbus cert-list
+$ certbus cert ls
 nd3oD6CfiY0 *.yourdomain.com, yourdomain.com
 ```
 
-The first value (`nd3oD6CfiY0`) is the **managed certificate's ID**. The term refers to
+The first value (`nd3oD6CfiY0`) is the **managed certificate's ID**. The "managed" refers to
 a single domain's timeline of certs. Certificates come and go as they're renewed, but this ID
 stays the same even when certs are rotated.
 
-Now let's suppose the certificate is nearing expiration. You can manually renew any certs
-pending renewal (NOTE: usually this is hooked up to cron so it's done automatically):
+Now let's suppose the certificate is nearing expiration. You can renew any certs pending
+renewal (NOTE: usually this is hooked up to cron or Lambda scheduler so it's done automatically):
 
 ```console
-$ certbus cert-renewable --renew-first
+$ certbus cert renewable --renew-first
 nd3oD6CfiY0 *.yourdomain.com, yourdomain.com
 ... lots of output about renewing certificate ...
 ```
@@ -118,5 +118,5 @@ of 12 renewed certs per hour anyway. (Batching will probably be implemented late
 Now, you don't need that domain anymore - we will stop managing & renewing the cert:
 
 ```console
-$ certbus cert-remove nd3oD6CfiY0
+$ certbus cert rm nd3oD6CfiY0
 ```
