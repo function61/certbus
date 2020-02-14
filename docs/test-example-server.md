@@ -15,12 +15,12 @@ Start the server
 
 You need these things:
 
-- AWS credentials as ENV variables (as discussed in bus set-up tutorial)
+- AWS credentials as ENV variables
   * as discussed in bus set-up tutorial
 - `EVENTHORIZON_TENANT` ENV variable
-  * as discussed in manager configuration
+  * as discussed in manager configuration tutorial
 - `certbus-client.key` which is the private key of public key `kek_public_key`
-  * as discussed in manager configuration
+  * as discussed in manager configuration tutorial
 
 
 ```console
@@ -49,9 +49,9 @@ $ curl --resolve foo.example.com:443:127.0.0.1 https://foo.example.com/
 
 You'll get:
 
-- `greetings from /` if everything works => a 404 (the server doesn't serve anything).
+- `greetings from /` if everything works.
 - TLS error if the certificate was not found.
-    * If you're unsure if this is TLS error add `--insecure` to bypass cert validation.
+  * You should see log messages in example-server if it didn't find a cert
 
 While the example server is running, you can now test issuing and removing certificates from
 CertBus-manager. The changes should propagate to your example server (along with log messages).

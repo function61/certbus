@@ -83,6 +83,12 @@ github.com/function61/eventhorizon v0.2.1-0.20200212181411-d755ad01ef1d h1:LmeL0
 github.com/function61/eventhorizon v0.2.1-0.20200212181411-d755ad01ef1d/go.mod h1:36a1rk2pxmoJzG9C5i+gu65eA4p3Qi/IK8LfD5YUnrg=
 github.com/function61/eventhorizon v0.2.1-0.20200213182139-3cc1c541ba9a h1:lo8tESZ+O0D9CeyuCO2vw295Pxc8BbyjuSV+lGV8hiY=
 github.com/function61/eventhorizon v0.2.1-0.20200213182139-3cc1c541ba9a/go.mod h1:ra29jBXPDB18vtP3GMtFFPvrfHnv4vRjWwTrXBf5LCk=
+github.com/function61/eventhorizon v0.2.1-0.20200214110040-ba85d6a1f6e4 h1:iCyRz+pF6y0sGSZWqJxUmznkkZ0UcOJD20OEgTHX0N4=
+github.com/function61/eventhorizon v0.2.1-0.20200214110040-ba85d6a1f6e4/go.mod h1:ra29jBXPDB18vtP3GMtFFPvrfHnv4vRjWwTrXBf5LCk=
+github.com/function61/eventhorizon v0.2.1-0.20200214110358-8825d6860fdf h1:zgDHIPv5OAsnXwYJGNJbQG5G6QUP/NxnK8ft3cpBcFM=
+github.com/function61/eventhorizon v0.2.1-0.20200214110358-8825d6860fdf/go.mod h1:ra29jBXPDB18vtP3GMtFFPvrfHnv4vRjWwTrXBf5LCk=
+github.com/function61/eventhorizon v0.2.1-0.20200214111147-d7a955702a3f h1:ymynx93PfHUm72WwTZ57xyBoo9HnGJ+rDfXVL37fcY8=
+github.com/function61/eventhorizon v0.2.1-0.20200214111147-d7a955702a3f/go.mod h1:ra29jBXPDB18vtP3GMtFFPvrfHnv4vRjWwTrXBf5LCk=
 github.com/function61/gokit v0.0.0-20200124154509-df1bf12a569a h1:xdgf+5A6PAiBx865XmEQopSW36pv/jJ6X3sZex8XEB0=
 github.com/function61/gokit v0.0.0-20200124154509-df1bf12a569a/go.mod h1:c0ezL3socqedTMy8NUpc6e/fgW+PGdma7DpXVPG1qF4=
 github.com/function61/gokit v0.0.0-20200208172747-bf05f8194b26 h1:jV387OSKMOSYAjzKW+XTiP2VVVR+Iwe84N8gazYHehk=
