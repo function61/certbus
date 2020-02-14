@@ -30,7 +30,7 @@ the config values.
 
 Create `certbus-manager.key` RSA key:
 
-```bash
+```console
 $ openssl genrsa -out certbus-manager.key 4096
 ```
 
@@ -45,13 +45,13 @@ so you can generate the key somewhere else and just enter the public key into Ce
 
 Generate private key:
 
-```bash
+```console
 $ openssl genrsa -out loadbalancer.key 4096
 ```
 
 Now, extract its public key:
 
-```bash
+```console
 $ openssl rsa -in loadbalancer.key -outform PEM -pubout -out loadbalancer.pub
 ```
 
@@ -102,7 +102,7 @@ $ certbus conf-update < config-temp.json
 Test (`conf-display`) that the config is readable, and then as cleanup remove the temp file
 so sensitive config is not in filesystem:
 
-```bash
+```console
 $ rm config-temp.json
 ```
 
@@ -114,7 +114,7 @@ Testing that configuration is readable
 
 Run this:
 
-```bash
+```console
 $ certbus conf-display
 ```
 

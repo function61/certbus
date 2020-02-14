@@ -82,7 +82,7 @@ Let's run through a certificate management lifecycle:
 - Renew it
 - Remove
 
-```bash
+```console
 $ certbus cert-new --wildcard yourdomain.com
 ```
 
@@ -90,7 +90,7 @@ $ certbus cert-new --wildcard yourdomain.com
 
 Now check that the certificate exists:
 
-```bash
+```console
 $ certbus cert-list
 nd3oD6CfiY0 *.yourdomain.com, yourdomain.com
 ```
@@ -102,19 +102,21 @@ stays the same even when certs are rotated.
 Now let's suppose the certificate is nearing expiration. You can manually renew any certs
 pending renewal (NOTE: usually this is hooked up to cron so it's done automatically):
 
-```bash
-# TODO: 
+```console
 $ certbus cert-renewable --renew-first
 nd3oD6CfiY0 *.yourdomain.com, yourdomain.com
+... lots of output about renewing certificate ...
 ```
 
-Note: `--renew-first` means it renews the first cert that is due for renewal. Currently we
-only support renewing one. It's assumed that one doesn't have hundreds of certs renewable
-at a given time, so a cron ticking every 5 minutes would have throughput of 12 renewed
-certs per hour anyway. (Batching will probably be implemented later, though.)
+Note: `--renew-first` means it renews the first cert that is due for renewal. Without it
+it's just a dry run.
 
-Now, you don't need that domain anymore - we will remove it.
+Currently we only support renewing one. It's assumed that one doesn't have hundreds of
+certs renewable at a given time, so a cron ticking every 5 minutes would have throughput
+of 12 renewed certs per hour anyway. (Batching will probably be implemented later, though.)
 
-```bash
+Now, you don't need that domain anymore - we will stop managing & renewing the cert:
+
+```console
 $ certbus cert-remove nd3oD6CfiY0
 ```

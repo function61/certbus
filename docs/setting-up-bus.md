@@ -56,7 +56,7 @@ Bootstrap EventHorizon
 
 Run this to bootstrap EventHorizon:
 
-```bash
+```console
 $ certbus eh bootstrap
 ```
 
@@ -73,7 +73,7 @@ want to keep separate configuration/certificates for).
 That's all you need to know for now. You probably won't need that feature, and we'll call
 you tenant 1. Create stream for tenant 1:
 
-```bash
+```console
 $ certbus eh stream-create / t-1
 ```
 
@@ -83,6 +83,6 @@ Create CertBus stream for your CertBus tenant
 
 Now create CertBus stream for tenant 1:
 
-```bash
+```console
 $ certbus eh stream-create /t-1 certbus
 ```
