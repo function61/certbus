@@ -7,6 +7,8 @@ import (
 	"github.com/function61/eventhorizon/pkg/ehclient"
 	"github.com/function61/eventhorizon/pkg/ehevent"
 	"github.com/function61/eventhorizon/pkg/ehreader"
+	"github.com/function61/gokit/logex"
+	"log"
 	"sync"
 )
 
@@ -21,13 +23,15 @@ type Store struct {
 	latestConfig *cbdomain.ConfigUpdated
 	version      ehclient.Cursor
 	mu           sync.Mutex
+	logl         *logex.Leveled
 }
 
-func New(tenant ehreader.Tenant) *Store {
+func New(tenant ehreader.Tenant, logger *log.Logger) *Store {
 	return &Store{
 		certificates: []*ManagedCertificate{},
 		byHostname:   map[string]*ManagedCertificate{},
 		version:      ehclient.Beginning(tenant.Stream(Stream)),
+		logl:         logex.Levels(logger),
 	}
 }
 
@@ -93,6 +97,8 @@ func (c *Store) ProcessEvents(_ context.Context, processAndCommit ehreader.Event
 func (c *Store) processEvent(ev ehevent.Event) error {
 	switch e := ev.(type) {
 	case *cbdomain.CertificateObtained:
+		c.logl.Info.Printf("CertificateObtained domains=%v", e.Domains)
+
 		cert := &ManagedCertificate{
 			Id:      e.Id,
 			Domains: e.Domains,
@@ -117,8 +123,12 @@ func (c *Store) processEvent(ev ehevent.Event) error {
 
 		c.certificates = append(c.certificates, cert)
 	case *cbdomain.CertificateRemoved:
+		c.logl.Info.Printf("CertificateRemoved id=%s", e.Id)
+
 		c.removeCertById(e.Id)
 	case *cbdomain.ConfigUpdated:
+		c.logl.Info.Println("ConfigUpdated")
+
 		c.latestConfig = e
 	default:
 		return ehreader.UnsupportedEventTypeErr(ev)

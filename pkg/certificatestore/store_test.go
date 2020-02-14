@@ -64,7 +64,7 @@ func TestGetLatestEncryptedConfig(t *testing.T) {
 }
 
 func setupCommon(t *testing.T) (*Store, time.Time) {
-	certs := New(ehreader.TenantId("dummyTenant"))
+	certs := New(ehreader.TenantId("dummyTenant"), nil)
 
 	t0 := time.Date(2020, 1, 31, 16, 54, 0, 0, time.UTC)
 

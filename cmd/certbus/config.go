@@ -24,7 +24,7 @@ type config struct {
 }
 
 func displayConfig(ctx context.Context, out io.Writer) error {
-	certs, err := certbus.ResolveRealtimeState(ctx, tenantClient())
+	certs, err := certbus.ResolveRealtimeState(ctx, tenantClient(), nil)
 	if err != nil {
 		return err
 	}

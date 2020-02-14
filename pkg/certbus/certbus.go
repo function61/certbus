@@ -26,7 +26,7 @@ func New(
 	privateKeyPem string,
 	logger *log.Logger,
 ) (*App, error) {
-	certs, err := ResolveRealtimeState(ctx, tenantCtx)
+	certs, err := ResolveRealtimeState(ctx, tenantCtx, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -72,8 +72,9 @@ func (c *App) Synchronizer(ctx context.Context) error {
 func ResolveRealtimeState(
 	ctx context.Context,
 	tenantCtx ehreader.TenantClient,
+	logger *log.Logger,
 ) (*certificatestore.Store, error) {
-	certificates := certificatestore.New(tenantCtx.Tenant)
+	certificates := certificatestore.New(tenantCtx.Tenant, logger)
 
 	if err := ehreader.New(tenantCtx.Client, cbdomain.Types).LoadUntilRealtime(ctx, certificates); err != nil {
 		return nil, err
