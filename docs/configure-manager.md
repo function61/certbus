@@ -63,7 +63,7 @@ From this point on, you will have to have have the AWS credentials as ENV variab
 (as advised in the bus set-up tutorial). You now also have to define:
 
 ```console
-export EVENTHORIZON_TENANT=prod:1
+$ export EVENTHORIZON_TENANT=prod:1
 ```
 
 (`1` is tenant #1 - it's just the default tenant number which you don't need to customize
@@ -77,7 +77,7 @@ This configuration will contain:
 
 Create `config-temp.json` (temporary as a file because the config will live on the bus) file with content:
 
-```json
+```javascript
 {
     "lets_encrypt": {
         "email": "...",
