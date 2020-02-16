@@ -61,7 +61,9 @@ Demo integration with loadbalancer:
     }
 ```
 
-View [more complete example](pkg/cbexampleserver/example.go).
+View [more complete example code](pkg/cbexampleserver/example.go).
+
+A concrete project that uses this is [Edgerouter](https://github.com/function61/edgerouter).
 
 
 Installation
