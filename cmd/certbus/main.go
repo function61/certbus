@@ -73,7 +73,7 @@ func certSubcommandsEntry() *cobra.Command {
 	}
 
 	cmd.AddCommand(listEntry())
-	cmd.AddCommand(newEntry())
+	cmd.AddCommand(mkEntry())
 	cmd.AddCommand(inspectEntry())
 	cmd.AddCommand(renewableEntry())
 	cmd.AddCommand(removeEntry())
@@ -94,15 +94,23 @@ func listEntry() *cobra.Command {
 	}
 }
 
-func newEntry() *cobra.Command {
+func mkEntry() *cobra.Command {
 	wildcard := false
+	subdomain := false
 
 	cmd := &cobra.Command{
 		Use:   "mk [domain]",
 		Short: "Issue new certificate",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			if wildcard && subdomain {
+				panic("cannot apply both wildcard and subdomain certificate at the same time")
+			}
+
 			createCert := newBasicCertificate
+			if subdomain {
+				createCert = newSubdomainCertificate
+			}
 			if wildcard {
 				createCert = newWildcardCertificate
 			}
@@ -114,6 +122,7 @@ func newEntry() *cobra.Command {
 	}
 
 	cmd.Flags().BoolVarP(&wildcard, "wildcard", "", wildcard, "Create wildcard certificate")
+	cmd.Flags().BoolVarP(&subdomain, "subdomain", "", subdomain, "Create subdomain certificate (no 'www.' prefix)")
 
 	return cmd
 }

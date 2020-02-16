@@ -114,6 +114,10 @@ func newBasicCertificate(ctx context.Context, domain string) error {
 	return newCertificateInternal(ctx, []string{"www." + domain, domain}, newCertId(), "new")
 }
 
+func newSubdomainCertificate(ctx context.Context, domain string) error {
+	return newCertificateInternal(ctx, []string{domain}, newCertId(), "new")
+}
+
 func newWildcardCertificate(ctx context.Context, domain string) error {
 	return newCertificateInternal(ctx, []string{"*." + domain, domain}, newCertId(), "new")
 }
