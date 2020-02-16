@@ -25,7 +25,9 @@ This is how [Caddy](https://github.com/caddyserver/caddy) (internally
 I don't like the above approach for these reasons:
 
 - Loadbalancer needs to have complicated logic for renewing certificates on time
-- Loadbalancer needs a stateful store to keep track of the ever-changing certs
+- Loadbalancer needs a
+  [stateful store](https://github.com/mholt/certmagic/wiki/Storage-Implementations)
+  to keep track of the ever-changing certs
 - Loadbalancer needs your LetsEncrypt (or some other ACME service) credentials
 - Loadbalancer needs your DNS credentials if you need private (think intranet) services
     * You need DNS solver because ACME can't verify your domain ownership via HTTP solver for private services
