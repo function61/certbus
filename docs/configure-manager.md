@@ -52,7 +52,7 @@ $ openssl genrsa -out loadbalancer.key 4096
 Now, extract its public key:
 
 ```console
-$ openssl rsa -in loadbalancer.key -outform PEM -pubout -out loadbalancer.pub
+$ openssl rsa -in loadbalancer.key -outform PEM -pubout -RSAPublicKey_out -out loadbalancer.pub
 ```
 
 
