@@ -11,6 +11,10 @@ Contents:
 - [How](#how)
 - [Installation](#installation)
 - [Certificate management](#certificate-management)
+  * [Issuance](#issuance)
+  * [Automatic renewal](#automatic-renewal)
+  * [Manual renewal](#manual-renewal)
+  * [Removal](#removal)
 
 
 Why?
@@ -86,8 +90,12 @@ Let's run through a certificate management lifecycle:
 - Renew it
 - Remove
 
+
+### Issuance
+
 ```console
 $ certbus cert mk --wildcard yourdomain.com
+... lots of output about issuing certificate ...
 ```
 
 (if you don't use `--wildcard`, you'll get cert assigned for `yourdomain.com, www.yourdomain.com`)
@@ -96,28 +104,59 @@ Now check that the certificate exists:
 
 ```console
 $ certbus cert ls
-nd3oD6CfiY0 *.yourdomain.com, yourdomain.com
++-------------+----------------------+--------------------------------------------------+
+| Id          | Expires              | Domains                                          |
++-------------+----------------------+--------------------------------------------------+
+| nd3oD6CfiY0 | 2020-05-16T11:32:15Z | *.yourdomain.com, yourdomain.com                 |
++-------------+----------------------+--------------------------------------------------+
 ```
 
 The first value (`nd3oD6CfiY0`) is the **managed certificate's ID**. The "managed" refers to
 a single domain's timeline of certs. Certificates come and go as they're renewed, but this ID
 stays the same even when certs are rotated.
 
+
+### Automatic renewal
+
 Now let's suppose the certificate is nearing expiration. You can renew any certs pending
 renewal (NOTE: usually this is hooked up to cron or Lambda scheduler so it's done automatically):
 
 ```console
 $ certbus cert renewable --renew-first
-nd3oD6CfiY0 *.yourdomain.com, yourdomain.com
++-------------+----------------------+--------------------------------------------------+
+| Id          | RenewAt              | Domains                                          |
++-------------+----------------------+--------------------------------------------------+
+| nd3oD6CfiY0 | 2020-04-16T11:32:15Z | *.yourdomain.com, yourdomain.com                 |
++-------------+----------------------+--------------------------------------------------+
+
 ... lots of output about renewing certificate ...
 ```
 
 Note: `--renew-first` means it renews the first cert that is due for renewal. Without it
-it's just a dry run.
+it's just a dry run (a list of certs that should be renewed).
 
 Currently we only support renewing one. It's assumed that one doesn't have hundreds of
 certs renewable at a given time, so a cron ticking every 5 minutes would have throughput
 of 12 renewed certs per hour anyway. (Batching will probably be implemented later, though.)
+
+
+### Manual renewal
+
+CertBus schedules certs to be renewed one month before its expiration. There can be times
+when you have to override the automation and just say "I know the cert is still valid for
+two months - renew it anyway!". One use case is a
+[CA notifying you that your cert will be revoked due to a bug in their system](https://twitter.com/joonas_fi/status/1234914782035181568),
+in which case you'll have to trigger renewal manually if your cert will be revoked much
+before its expiration time.
+
+Manual renewal looks like this:
+
+```console
+$ certbus cert renew nd3oD6CfiY0
+... lots of output about renewing certificate ...
+```
+
+### Removal
 
 Now, you don't need that domain anymore - we will stop managing & renewing the cert:
 
