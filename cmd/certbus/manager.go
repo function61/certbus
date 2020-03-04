@@ -14,6 +14,7 @@ import (
 	"github.com/function61/eventhorizon/pkg/ehreader"
 	"github.com/function61/gokit/cryptorandombytes"
 	"github.com/function61/gokit/cryptoutil"
+	"github.com/function61/gokit/envvar"
 	"github.com/function61/gokit/jsonfile"
 	"github.com/function61/gokit/logex"
 	"github.com/go-acme/lego/v3/certificate"
@@ -279,12 +280,22 @@ func newCertId() string {
 }
 
 func loadManagerPrivateKey() (*rsa.PrivateKey, error) {
-	privKeyPem, err := ioutil.ReadFile("certbus-manager.key")
-	if err != nil {
-		return nil, err
-	}
+	envVarName := "CERTBUS_MANAGER_KEY"
+	if os.Getenv(envVarName) != "" {
+		privKeyPem, err := envvar.RequiredFromBase64Encoded(envVarName)
+		if err != nil {
+			return nil, err
+		}
 
-	return cryptoutil.ParsePemPkcs1EncodedRsaPrivateKey(privKeyPem)
+		return cryptoutil.ParsePemPkcs1EncodedRsaPrivateKey(privKeyPem)
+	} else {
+		privKeyPem, err := ioutil.ReadFile("certbus-manager.key")
+		if err != nil {
+			return nil, err
+		}
+
+		return cryptoutil.ParsePemPkcs1EncodedRsaPrivateKey(privKeyPem)
+	}
 }
 
 func decryptConfig(certs *certificatestore.Store) (*config, error) {
