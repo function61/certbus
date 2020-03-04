@@ -14,7 +14,6 @@ import (
 	"github.com/function61/eventhorizon/pkg/ehreader"
 	"github.com/function61/gokit/cryptorandombytes"
 	"github.com/function61/gokit/cryptoutil"
-	"github.com/function61/gokit/envvar"
 	"github.com/function61/gokit/jsonfile"
 	"github.com/function61/gokit/logex"
 	"github.com/go-acme/lego/v3/certificate"
@@ -280,14 +279,11 @@ func newCertId() string {
 }
 
 func loadManagerPrivateKey() (*rsa.PrivateKey, error) {
-	envVarName := "CERTBUS_MANAGER_KEY"
-	if os.Getenv(envVarName) != "" {
-		privKeyPem, err := envvar.RequiredFromBase64Encoded(envVarName)
-		if err != nil {
-			return nil, err
-		}
-
-		return cryptoutil.ParsePemPkcs1EncodedRsaPrivateKey(privKeyPem)
+	// cannot just pass this base64 encoded because we're hitting Lambda limits:
+	//   https://twitter.com/joonas_fi/status/1235122048340357120
+	fromEnvVar := strings.ReplaceAll(os.Getenv("CERTBUS_MANAGER_KEY"), `\n`, "\n")
+	if fromEnvVar != "" {
+		return cryptoutil.ParsePemPkcs1EncodedRsaPrivateKey([]byte(fromEnvVar))
 	} else {
 		privKeyPem, err := ioutil.ReadFile("certbus-manager.key")
 		if err != nil {
