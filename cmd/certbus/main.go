@@ -76,6 +76,7 @@ func certSubcommandsEntry() *cobra.Command {
 	cmd.AddCommand(mkEntry())
 	cmd.AddCommand(inspectEntry())
 	cmd.AddCommand(renewableEntry())
+	cmd.AddCommand(renewEntry())
 	cmd.AddCommand(removeEntry())
 
 	return cmd
@@ -161,6 +162,19 @@ func renewableEntry() *cobra.Command {
 	cmd.Flags().BoolVarP(&renewFirst, "renew-first", "r", renewFirst, "Renew first renewable cert")
 
 	return cmd
+}
+
+func renewEntry() *cobra.Command {
+	return &cobra.Command{
+		Use:   "renew [id]",
+		Short: "Renew a cert",
+		Args:  cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			exitIfError(renew(
+				ossignal.InterruptOrTerminateBackgroundCtx(nil),
+				args[0]))
+		},
+	}
 }
 
 func removeEntry() *cobra.Command {

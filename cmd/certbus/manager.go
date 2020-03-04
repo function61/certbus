@@ -46,6 +46,20 @@ func inspect(ctx context.Context, id string) error {
 	return jsonfile.Marshal(os.Stdout, cert)
 }
 
+func renew(ctx context.Context, id string) error {
+	certs, err := certbus.ResolveRealtimeState(ctx, tenantClient(), nil)
+	if err != nil {
+		return err
+	}
+
+	cert := certs.ById(id)
+	if cert == nil {
+		return fmt.Errorf("cert not found: %s", id)
+	}
+
+	return renewCertificate(ctx, *cert)
+}
+
 func listRenewable(ctx context.Context, after time.Time, renewFirst bool) error {
 	certs, err := certbus.ResolveRealtimeState(ctx, tenantClient(), nil)
 	if err != nil {
