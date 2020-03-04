@@ -87,9 +87,7 @@ func listEntry() *cobra.Command {
 		Short: "List certificates",
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := list(ossignal.InterruptOrTerminateBackgroundCtx(nil)); err != nil {
-				panic(err)
-			}
+			exitIfError(list(ossignal.InterruptOrTerminateBackgroundCtx(nil)))
 		},
 	}
 }
@@ -115,9 +113,7 @@ func mkEntry() *cobra.Command {
 				createCert = newWildcardCertificate
 			}
 
-			if err := createCert(ossignal.InterruptOrTerminateBackgroundCtx(nil), args[0]); err != nil {
-				panic(err)
-			}
+			exitIfError(createCert(ossignal.InterruptOrTerminateBackgroundCtx(nil), args[0]))
 		},
 	}
 
@@ -133,9 +129,7 @@ func inspectEntry() *cobra.Command {
 		Short: "Inspect a certificate",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := inspect(ossignal.InterruptOrTerminateBackgroundCtx(nil), args[0]); err != nil {
-				panic(err)
-			}
+			exitIfError(inspect(ossignal.InterruptOrTerminateBackgroundCtx(nil), args[0]))
 		},
 	}
 }
@@ -144,7 +138,7 @@ func renewableEntry() *cobra.Command {
 	renewFirst := false
 
 	cmd := &cobra.Command{
-		Use:   "renewable",
+		Use:   "renewable [at]",
 		Short: "List renewable certs",
 		Args:  cobra.MaximumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
@@ -157,9 +151,10 @@ func renewableEntry() *cobra.Command {
 				}
 			}
 
-			if err := listRenewable(ossignal.InterruptOrTerminateBackgroundCtx(nil), after, renewFirst); err != nil {
-				panic(err)
-			}
+			exitIfError(listRenewable(
+				ossignal.InterruptOrTerminateBackgroundCtx(nil),
+				after,
+				renewFirst))
 		},
 	}
 
@@ -174,9 +169,14 @@ func removeEntry() *cobra.Command {
 		Short: "Remove a certificate (will also not get automatically renewed)",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := remove(ossignal.InterruptOrTerminateBackgroundCtx(nil), args[0]); err != nil {
-				panic(err)
-			}
+			exitIfError(remove(ossignal.InterruptOrTerminateBackgroundCtx(nil), args[0]))
 		},
+	}
+}
+
+func exitIfError(err error) {
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }
