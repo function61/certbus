@@ -1,5 +1,5 @@
-[![Build Status](https://img.shields.io/travis/function61/certbus.svg?style=for-the-badge)](https://travis-ci.org/function61/certbus)
-[![Download](https://img.shields.io/bintray/v/function61/dl/certbus.svg?style=for-the-badge&label=Download)](https://bintray.com/function61/dl/certbus/_latestVersion#files)
+![Build status](https://github.com/function61/html2pdf/workflows/Build/badge.svg)
+![Download](https://img.shields.io/github/downloads/function61/certbus/total.svg?style=for-the-badge)
 
 CertBus is an event bus that keeps your TLS certificates updated.
 
