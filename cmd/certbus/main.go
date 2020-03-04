@@ -46,9 +46,9 @@ func configSubcommandsEntry() *cobra.Command {
 		Short: "Update configuration on the event bus",
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := updateConfig(ossignal.InterruptOrTerminateBackgroundCtx(nil), os.Stdin); err != nil {
-				panic(err)
-			}
+			exitIfError(updateConfig(
+				ossignal.InterruptOrTerminateBackgroundCtx(nil),
+				os.Stdin))
 		},
 	})
 
@@ -57,9 +57,9 @@ func configSubcommandsEntry() *cobra.Command {
 		Short: "Fetch configuration from the event bus (warning: shows secrets)",
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := displayConfig(ossignal.InterruptOrTerminateBackgroundCtx(nil), os.Stdout); err != nil {
-				panic(err)
-			}
+			exitIfError(displayConfig(
+				ossignal.InterruptOrTerminateBackgroundCtx(nil),
+				os.Stdout))
 		},
 	})
 
