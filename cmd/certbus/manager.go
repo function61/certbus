@@ -20,6 +20,7 @@ import (
 	"github.com/go-acme/lego/v3/lego"
 	legolog "github.com/go-acme/lego/v3/log"
 	"github.com/go-acme/lego/v3/providers/dns/cloudflare"
+	"github.com/scylladb/termtables"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -51,8 +52,14 @@ func listRenewable(ctx context.Context, after time.Time, renewFirst bool) error 
 		return err
 	}
 
+	tbl := termtables.CreateTable()
+	tbl.AddHeaders("Id", "RenewAt", "Domains")
+
 	for idx, cert := range certificatestore.CertsDueForRenewal(certs, after) {
-		fmt.Printf("- %s %v\n", cert.RenewAt.Format(time.RFC3339), cert.Domains)
+		tbl.AddRow(
+			cert.Id,
+			cert.RenewAt.Format(time.RFC3339),
+			strings.Join(cert.Domains, ", "))
 
 		if renewFirst && idx == 0 {
 			if err := renewCertificate(ctx, cert); err != nil {
@@ -60,6 +67,8 @@ func listRenewable(ctx context.Context, after time.Time, renewFirst bool) error 
 			}
 		}
 	}
+
+	fmt.Println(tbl.Render())
 
 	return nil
 }
@@ -70,9 +79,17 @@ func list(ctx context.Context) error {
 		return err
 	}
 
+	tbl := termtables.CreateTable()
+	tbl.AddHeaders("Id", "Expires", "Domains")
+
 	for _, cert := range certs.All() {
-		fmt.Printf("%s %s\n", cert.Id, strings.Join(cert.Domains, ", "))
+		tbl.AddRow(
+			cert.Id,
+			cert.Certificate.NotAfter.Format(time.RFC3339),
+			strings.Join(cert.Domains, ", "))
 	}
+
+	fmt.Println(tbl.Render())
 
 	return nil
 }
