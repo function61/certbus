@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/function61/certbus/pkg/cbexampleserver"
 	"github.com/function61/eventhorizon/pkg/ehcli"
+	"github.com/function61/gokit/aws/lambdautils"
 	"github.com/function61/gokit/dynversion"
 	"github.com/function61/gokit/ossignal"
 	"github.com/spf13/cobra"
@@ -12,6 +15,17 @@ import (
 )
 
 func main() {
+	if lambdautils.InLambda() {
+		// assume scheduled events => renew first renewable
+		lambda.StartHandler(lambda.NewHandler(func(ctx context.Context) error {
+			return listRenewable(
+				ctx,
+				time.Now(),
+				true)
+		}))
+		return
+	}
+
 	app := &cobra.Command{
 		Use:     os.Args[0],
 		Short:   "Cert Bus keeps your TLS certificates fresh",
