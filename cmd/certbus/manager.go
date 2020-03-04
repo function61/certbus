@@ -260,21 +260,8 @@ func makeCertificateObtainedEvent(
 	), nil
 }
 
-// CLI arguments beginning with dash are problematic (which base64 URL variant can produce),
-// so we'll be nice guys and guarantee that the ID won't start with one.
-func randomBase64UrlWithoutLeadingDash(length int) string {
-	id := cryptorandombytes.Base64Url(length)
-
-	if id[0] == '-' {
-		// try again. the odds should exponentially decrease for recursion level to increase
-		return randomBase64UrlWithoutLeadingDash(length)
-	}
-
-	return id
-}
-
 func newCertId() string {
-	return randomBase64UrlWithoutLeadingDash(8)
+	return cryptorandombytes.Base64UrlWithoutLeadingDash(8)
 }
 
 func loadManagerPrivateKey() (*rsa.PrivateKey, error) {
