@@ -47,6 +47,7 @@ func TestDecryptedStore(t *testing.T) {
 	_, _ = DecryptedByHostnameSupportingWildcard("bar.prod4.fn61.net", decryptedStore)
 	assert.Assert(t, byHostnameCalls.calls == 4)
 
+	//nolint:staticcheck
 	pubKey, err := cryptoutil.PublicKeyFromPrivateKey(cert.PrivateKey)
 	assert.Ok(t, err)
 
