@@ -25,7 +25,7 @@ type config struct {
 }
 
 func displayConfig(ctx context.Context, out io.Writer) error {
-	certs, err := certbus.ResolveRealtimeState(ctx, tenantClient(), nil)
+	certs, err := certbus.ResolveRealtimeState(ctx, readTenantCtx(), nil)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func updateConfig(ctx context.Context, confToValidate io.Reader) error {
 		confJsonEncrypted.Ciphertext,
 		ehevent.MetaSystemUser(time.Now()))
 
-	tenantCtx := tenantClient()
+	tenantCtx := readTenantCtx()
 
 	_, err = tenantCtx.Client.Append(
 		ctx,

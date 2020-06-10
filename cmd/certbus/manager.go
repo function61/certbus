@@ -34,7 +34,7 @@ func init() {
 }
 
 func inspect(ctx context.Context, id string) error {
-	certs, err := certbus.ResolveRealtimeState(ctx, tenantClient(), nil)
+	certs, err := certbus.ResolveRealtimeState(ctx, readTenantCtx(), nil)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func inspect(ctx context.Context, id string) error {
 }
 
 func renew(ctx context.Context, id string) error {
-	certs, err := certbus.ResolveRealtimeState(ctx, tenantClient(), nil)
+	certs, err := certbus.ResolveRealtimeState(ctx, readTenantCtx(), nil)
 	if err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func renew(ctx context.Context, id string) error {
 }
 
 func listRenewable(ctx context.Context, after time.Time, renewFirst bool) error {
-	certs, err := certbus.ResolveRealtimeState(ctx, tenantClient(), nil)
+	certs, err := certbus.ResolveRealtimeState(ctx, readTenantCtx(), nil)
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func listRenewable(ctx context.Context, after time.Time, renewFirst bool) error 
 }
 
 func list(ctx context.Context) error {
-	certs, err := certbus.ResolveRealtimeState(ctx, tenantClient(), nil)
+	certs, err := certbus.ResolveRealtimeState(ctx, readTenantCtx(), nil)
 	if err != nil {
 		return err
 	}
@@ -110,7 +110,7 @@ func list(ctx context.Context) error {
 }
 
 func remove(ctx context.Context, id string) error {
-	tenantCtx := tenantClient()
+	tenantCtx := readTenantCtx()
 
 	certs, err := certbus.ResolveRealtimeState(ctx, tenantCtx, nil)
 	if err != nil {
@@ -134,7 +134,7 @@ func remove(ctx context.Context, id string) error {
 	return err
 }
 
-func tenantClient() ehreader.TenantCtx {
+func readTenantCtx() ehreader.TenantCtx {
 	client, err := ehreader.TenantCtxFrom(ehreader.ConfigFromEnv)
 	if err != nil {
 		panic(err)
@@ -165,7 +165,7 @@ func newCertificateInternal(
 	certId string,
 	reason string,
 ) error {
-	tenantCtx := tenantClient()
+	tenantCtx := readTenantCtx()
 
 	certs, err := certbus.ResolveRealtimeState(ctx, tenantCtx, nil)
 	if err != nil {
