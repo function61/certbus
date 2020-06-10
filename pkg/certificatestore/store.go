@@ -36,6 +36,10 @@ func New(tenant ehreader.Tenant, logger *log.Logger) *Store {
 	}
 }
 
+func (c *Store) GetEventTypes() ehevent.Allocators {
+	return cbdomain.Types
+}
+
 func (c *Store) Version() ehclient.Cursor {
 	c.mu.Lock()
 	defer c.mu.Unlock()

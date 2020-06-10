@@ -127,19 +127,20 @@ func remove(ctx context.Context, id string) error {
 
 	// this uses optimistic locking
 	// TODO: retry logic
-	return tenantCtx.Client.AppendAt(
+	_, err = tenantCtx.Client.AppendAfter(
 		ctx,
 		certs.Version(),
 		[]string{ehevent.Serialize(removed)})
+	return err
 }
 
-func tenantClient() ehreader.TenantClient {
-	client, err := ehreader.TenantConfigFromEnv()
+func tenantClient() ehreader.TenantCtx {
+	client, err := ehreader.TenantCtxFrom(ehreader.ConfigFromEnv)
 	if err != nil {
 		panic(err)
 	}
 
-	return client
+	return *client
 }
 
 func newBasicCertificate(ctx context.Context, domain string) error {
@@ -202,10 +203,11 @@ func newCertificateInternal(
 		return err
 	}
 
-	return tenantCtx.Client.Append(
+	_, err = tenantCtx.Client.Append(
 		ctx,
 		tenantCtx.Stream(certificatestore.Stream),
 		[]string{ehevent.Serialize(obtained)})
+	return err
 }
 
 func makeLegoClient(conf config) (*lego.Client, error) {

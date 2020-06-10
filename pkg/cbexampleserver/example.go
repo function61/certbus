@@ -37,9 +37,14 @@ func exampleServer(ctx context.Context, logger *log.Logger) error {
 		return err
 	}
 
+	tenantCtx, err := ehreader.TenantCtxFrom(ehreader.ConfigFromEnv)
+	if err != nil {
+		return err
+	}
+
 	certBus, err := certbus.New(
 		ctx,
-		tenantClient(),
+		*tenantCtx,
 		string(privateKey),
 		logex.Prefix("certbus", logger))
 	if err != nil {
@@ -77,15 +82,6 @@ func exampleServer(ctx context.Context, logger *log.Logger) error {
 	tasks.Start("http server shutdowner", httpShutdownTask(srv))
 
 	return tasks.Wait()
-}
-
-func tenantClient() ehreader.TenantClient {
-	client, err := ehreader.TenantConfigFromEnv()
-	if err != nil {
-		panic(err)
-	}
-
-	return client
 }
 
 // helper for making HTTP shutdown task. Go's http.Server is weird that we cannot use

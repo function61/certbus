@@ -38,9 +38,7 @@ func main() {
 	app.AddCommand(configSubcommandsEntry())
 
 	// Event Horizon administration
-	for _, cmd := range ehcli.Entrypoints() {
-		app.AddCommand(cmd)
-	}
+	app.AddCommand(ehcli.Entrypoint())
 
 	app.AddCommand(cbexampleserver.Entrypoint())
 

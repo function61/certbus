@@ -67,10 +67,11 @@ func updateConfig(ctx context.Context, confToValidate io.Reader) error {
 
 	tenantCtx := tenantClient()
 
-	return tenantCtx.Client.Append(
+	_, err = tenantCtx.Client.Append(
 		ctx,
 		tenantCtx.Stream(certificatestore.Stream),
 		[]string{ehevent.Serialize(confEvent)})
+	return err
 }
 
 type cloudflareCredentials struct {
