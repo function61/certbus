@@ -4,15 +4,16 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+
 	"github.com/function61/certbus/pkg/certbus"
 	"github.com/function61/eventhorizon/pkg/ehreader"
 	"github.com/function61/gokit/logex"
 	"github.com/function61/gokit/ossignal"
 	"github.com/function61/gokit/taskrunner"
 	"github.com/spf13/cobra"
-	"io/ioutil"
-	"log"
-	"net/http"
 )
 
 func Entrypoint() *cobra.Command {

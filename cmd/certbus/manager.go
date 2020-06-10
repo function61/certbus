@@ -6,6 +6,11 @@ import (
 	"crypto/rsa"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
+	"time"
+
 	"github.com/function61/certbus/pkg/cbdomain"
 	"github.com/function61/certbus/pkg/certbus"
 	"github.com/function61/certbus/pkg/certificatestore"
@@ -21,10 +26,6 @@ import (
 	legolog "github.com/go-acme/lego/v3/log"
 	"github.com/go-acme/lego/v3/providers/dns/cloudflare"
 	"github.com/scylladb/termtables"
-	"io/ioutil"
-	"os"
-	"strings"
-	"time"
 )
 
 // FIXME

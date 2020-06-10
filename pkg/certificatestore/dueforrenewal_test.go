@@ -1,9 +1,10 @@
 package certificatestore
 
 import (
-	"github.com/function61/gokit/assert"
 	"testing"
 	"time"
+
+	"github.com/function61/gokit/assert"
 )
 
 func TestCertsDueForRenewal(t *testing.T) {

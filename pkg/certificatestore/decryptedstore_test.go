@@ -1,11 +1,12 @@
 package certificatestore
 
 import (
+	"testing"
+
 	"github.com/function61/certbus/pkg/cbdomain"
 	"github.com/function61/eventhorizon/pkg/ehevent"
 	"github.com/function61/gokit/assert"
 	"github.com/function61/gokit/cryptoutil"
-	"testing"
 )
 
 func TestDecryptedStore(t *testing.T) {

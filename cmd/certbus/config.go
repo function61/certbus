@@ -5,6 +5,9 @@ import (
 	"context"
 	"crypto"
 	"fmt"
+	"io"
+	"time"
+
 	"github.com/function61/certbus/pkg/cbdomain"
 	"github.com/function61/certbus/pkg/certbus"
 	"github.com/function61/certbus/pkg/certificatestore"
@@ -13,8 +16,6 @@ import (
 	"github.com/function61/gokit/cryptoutil"
 	"github.com/function61/gokit/jsonfile"
 	"github.com/go-acme/lego/v3/registration"
-	"io"
-	"time"
 )
 
 type config struct {

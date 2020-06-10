@@ -2,14 +2,15 @@ package certificatestore
 
 import (
 	"context"
+	"log"
+	"sync"
+
 	"github.com/function61/certbus/pkg/cbdomain"
 	"github.com/function61/certbus/pkg/encryptedbox"
 	"github.com/function61/eventhorizon/pkg/ehclient"
 	"github.com/function61/eventhorizon/pkg/ehevent"
 	"github.com/function61/eventhorizon/pkg/ehreader"
 	"github.com/function61/gokit/logex"
-	"log"
-	"sync"
 )
 
 const (

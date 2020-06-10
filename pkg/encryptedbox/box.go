@@ -5,9 +5,10 @@ import (
 	"bytes"
 	"crypto/rsa"
 	"fmt"
+	"io"
+
 	"github.com/function61/gokit/cryptoutil"
 	"github.com/function61/gokit/pkencryptedstream"
-	"io"
 )
 
 type Box struct {

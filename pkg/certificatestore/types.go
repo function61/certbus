@@ -3,8 +3,9 @@
 package certificatestore
 
 import (
-	"github.com/function61/certbus/pkg/encryptedbox"
 	"time"
+
+	"github.com/function61/certbus/pkg/encryptedbox"
 )
 
 type ManagedCertificate struct {

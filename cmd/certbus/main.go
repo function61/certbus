@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"time"
+
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/function61/certbus/pkg/cbexampleserver"
 	"github.com/function61/eventhorizon/pkg/ehcli"
@@ -10,8 +13,6 @@ import (
 	"github.com/function61/gokit/dynversion"
 	"github.com/function61/gokit/ossignal"
 	"github.com/spf13/cobra"
-	"os"
-	"time"
 )
 
 func main() {

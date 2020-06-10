@@ -4,12 +4,13 @@ package certbus
 import (
 	"context"
 	"crypto/tls"
+	"log"
+	"time"
+
 	"github.com/function61/certbus/pkg/cbdomain"
 	"github.com/function61/certbus/pkg/certificatestore"
 	"github.com/function61/eventhorizon/pkg/ehreader"
 	"github.com/function61/gokit/logex"
-	"log"
-	"time"
 )
 
 type App struct {

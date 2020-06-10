@@ -3,9 +3,10 @@ package certificatestore
 import (
 	"crypto/rsa"
 	"crypto/tls"
+	"sync"
+
 	"github.com/function61/eventhorizon/pkg/ehclient"
 	"github.com/function61/gokit/cryptoutil"
-	"sync"
 )
 
 type ManagedCertificateByHostnameFinder interface {
