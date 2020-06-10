@@ -17,7 +17,7 @@ import (
 func main() {
 	if lambdautils.InLambda() {
 		// assume scheduled events => renew first renewable
-		lambda.StartHandler(lambda.NewHandler(func(ctx context.Context) error {
+		lambda.StartHandler(lambdautils.NoPayloadAdapter(func(ctx context.Context) error {
 			return listRenewable(
 				ctx,
 				time.Now(),
