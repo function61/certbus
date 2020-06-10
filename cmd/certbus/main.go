@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"time"
 
@@ -11,7 +10,7 @@ import (
 	"github.com/function61/eventhorizon/pkg/ehcli"
 	"github.com/function61/gokit/aws/lambdautils"
 	"github.com/function61/gokit/dynversion"
-	"github.com/function61/gokit/ossignal"
+	"github.com/function61/gokit/osutil"
 	"github.com/spf13/cobra"
 )
 
@@ -42,10 +41,7 @@ func main() {
 
 	app.AddCommand(cbexampleserver.Entrypoint())
 
-	if err := app.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	osutil.ExitIfError(app.Execute())
 }
 
 func configSubcommandsEntry() *cobra.Command {
@@ -59,8 +55,8 @@ func configSubcommandsEntry() *cobra.Command {
 		Short: "Update configuration on the event bus",
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			exitIfError(updateConfig(
-				ossignal.InterruptOrTerminateBackgroundCtx(nil),
+			osutil.ExitIfError(updateConfig(
+				osutil.CancelOnInterruptOrTerminate(nil),
 				os.Stdin))
 		},
 	})
@@ -70,8 +66,8 @@ func configSubcommandsEntry() *cobra.Command {
 		Short: "Fetch configuration from the event bus (warning: shows secrets)",
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			exitIfError(displayConfig(
-				ossignal.InterruptOrTerminateBackgroundCtx(nil),
+			osutil.ExitIfError(displayConfig(
+				osutil.CancelOnInterruptOrTerminate(nil),
 				os.Stdout))
 		},
 	})
@@ -101,7 +97,7 @@ func listEntry() *cobra.Command {
 		Short: "List certificates",
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			exitIfError(list(ossignal.InterruptOrTerminateBackgroundCtx(nil)))
+			osutil.ExitIfError(list(osutil.CancelOnInterruptOrTerminate(nil)))
 		},
 	}
 }
@@ -127,7 +123,7 @@ func mkEntry() *cobra.Command {
 				createCert = newWildcardCertificate
 			}
 
-			exitIfError(createCert(ossignal.InterruptOrTerminateBackgroundCtx(nil), args[0]))
+			osutil.ExitIfError(createCert(osutil.CancelOnInterruptOrTerminate(nil), args[0]))
 		},
 	}
 
@@ -143,7 +139,7 @@ func inspectEntry() *cobra.Command {
 		Short: "Inspect a certificate",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			exitIfError(inspect(ossignal.InterruptOrTerminateBackgroundCtx(nil), args[0]))
+			osutil.ExitIfError(inspect(osutil.CancelOnInterruptOrTerminate(nil), args[0]))
 		},
 	}
 }
@@ -165,8 +161,8 @@ func renewableEntry() *cobra.Command {
 				}
 			}
 
-			exitIfError(listRenewable(
-				ossignal.InterruptOrTerminateBackgroundCtx(nil),
+			osutil.ExitIfError(listRenewable(
+				osutil.CancelOnInterruptOrTerminate(nil),
 				after,
 				renewFirst))
 		},
@@ -183,8 +179,8 @@ func renewEntry() *cobra.Command {
 		Short: "Renew a cert",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			exitIfError(renew(
-				ossignal.InterruptOrTerminateBackgroundCtx(nil),
+			osutil.ExitIfError(renew(
+				osutil.CancelOnInterruptOrTerminate(nil),
 				args[0]))
 		},
 	}
@@ -196,14 +192,9 @@ func removeEntry() *cobra.Command {
 		Short: "Remove a certificate (will also not get automatically renewed)",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			exitIfError(remove(ossignal.InterruptOrTerminateBackgroundCtx(nil), args[0]))
+			osutil.ExitIfError(remove(
+				osutil.CancelOnInterruptOrTerminate(nil),
+				args[0]))
 		},
-	}
-}
-
-func exitIfError(err error) {
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
 	}
 }

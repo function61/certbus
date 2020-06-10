@@ -71,6 +71,7 @@ github.com/coreos/go-semver v0.2.0/go.mod h1:nnelYz7RCh+5ahJtPPxZlU+153eP4D4r3Ee
 github.com/cpu/goacmedns v0.0.1/go.mod h1:sesf/pNnCYwUevQEQfEwY0Y3DydlQWSGZbaMElOWxok=
 github.com/cpuguy83/go-md2man v1.0.10/go.mod h1:SmD6nW6nTyfqj6ABTjUi3V3JVMnlJmwcJI5acqYI6dE=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
+github.com/cubewise-code/go-mime v0.0.0-20190322015324-9c5316ef3e8e/go.mod h1:4abs/jPXcmJzYoYGF91JF9Uq9s/KL5n1jvFDix8KcqY=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
@@ -97,6 +98,8 @@ github.com/function61/eventhorizon v0.2.1-0.20200214111147-d7a955702a3f h1:ymynx
 github.com/function61/eventhorizon v0.2.1-0.20200214111147-d7a955702a3f/go.mod h1:ra29jBXPDB18vtP3GMtFFPvrfHnv4vRjWwTrXBf5LCk=
 github.com/function61/eventhorizon v0.2.1-0.20200227140656-f89fe5d462ca h1:FY7y7ZvUjrprByPMWhWMBmyr4htvTkQ5Jh8psrhrl/w=
 github.com/function61/eventhorizon v0.2.1-0.20200227140656-f89fe5d462ca/go.mod h1:SztwDAaqWnLPSFyVmV0zbBgRsvExr0GzrlOj9sWTC+Y=
+github.com/function61/eventhorizon v0.2.1-0.20200610093004-78aa8b3a710f h1:O8sCfSzDr5FdN+QyOao4+Ak3gXE8DVWCy/5G8jMq2Bs=
+github.com/function61/eventhorizon v0.2.1-0.20200610093004-78aa8b3a710f/go.mod h1:ahYueOlhtRXqpV3zhnM4o0JUul8BkXaeiKlBfnm9XsE=
 github.com/function61/gokit v0.0.0-20200124154509-df1bf12a569a h1:xdgf+5A6PAiBx865XmEQopSW36pv/jJ6X3sZex8XEB0=
 github.com/function61/gokit v0.0.0-20200124154509-df1bf12a569a/go.mod h1:c0ezL3socqedTMy8NUpc6e/fgW+PGdma7DpXVPG1qF4=
 github.com/function61/gokit v0.0.0-20200208172747-bf05f8194b26 h1:jV387OSKMOSYAjzKW+XTiP2VVVR+Iwe84N8gazYHehk=
@@ -106,6 +109,8 @@ github.com/function61/gokit v0.0.0-20200211113029-522dc8b0ff7a/go.mod h1:c0ezL3s
 github.com/function61/gokit v0.0.0-20200226141201-fe205250686d/go.mod h1:jAkW2pwxa4N3qxEUDA3zDhfiJInBfF4BjsbkWAU13aU=
 github.com/function61/gokit v0.0.0-20200302141937-14d21ef1b462 h1:2q/9JN4YtpJK5cKHCErb8Iv5kUe5FTpa8dB3cJCaoPM=
 github.com/function61/gokit v0.0.0-20200302141937-14d21ef1b462/go.mod h1:f6JhYQwMbwfAX472K/2A46CKet7BrpugMzuCobtqPQo=
+github.com/function61/gokit v0.0.0-20200608105953-12235c68c38b h1:oSy6OCp5pk+hObohgNR7MT2Yj1A3f61fAuVnT/D0lJE=
+github.com/function61/gokit v0.0.0-20200608105953-12235c68c38b/go.mod h1:qkZftFp+nvc6BitjWRb9GXS4A1tQ2BuASctzscHa9Io=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/go-acme/lego v2.7.2+incompatible h1:ThhpPBgf6oa9X/vRd0kEmWOsX7+vmYdckmGZSb+FEp0=
 github.com/go-acme/lego/v3 v3.3.0 h1:6BePZsOiYA4/w+M7QDytxQtMfCipMPGnWAHs9pWks98=

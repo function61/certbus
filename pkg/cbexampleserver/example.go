@@ -10,8 +10,9 @@ import (
 
 	"github.com/function61/certbus/pkg/certbus"
 	"github.com/function61/eventhorizon/pkg/ehreader"
+	"github.com/function61/gokit/httputils"
 	"github.com/function61/gokit/logex"
-	"github.com/function61/gokit/ossignal"
+	"github.com/function61/gokit/osutil"
 	"github.com/function61/gokit/taskrunner"
 	"github.com/spf13/cobra"
 )
@@ -23,9 +24,10 @@ func Entrypoint() *cobra.Command {
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			rootLogger := logex.StandardLogger()
-			if err := exampleServer(ossignal.InterruptOrTerminateBackgroundCtx(rootLogger), rootLogger); err != nil {
-				panic(err)
-			}
+
+			osutil.ExitIfError(exampleServer(
+				osutil.CancelOnInterruptOrTerminate(rootLogger),
+				rootLogger))
 		},
 	}
 }
@@ -69,37 +71,17 @@ func exampleServer(ctx context.Context, logger *log.Logger) error {
 	// you don't have to use taskrunner, but it makes graceful stopping simpler
 	tasks := taskrunner.New(ctx, logger)
 
-	tasks.Start("certbus sync", func(ctx context.Context, _ string) error {
+	tasks.Start("certbus sync", func(ctx context.Context) error {
 		return certBus.Synchronizer(ctx)
 	})
 
-	tasks.Start("http server (https://localhost)", func(_ context.Context, _ string) error {
-		return removeGracefulServerClosedError(srv.ListenAndServeTLS("", ""))
+	tasks.Start("http server (https://localhost)", func(_ context.Context) error {
+		return httputils.RemoveGracefulServerClosedError(srv.ListenAndServeTLS("", ""))
 	})
 
 	// Go's HTTP server doesn't support stopping via context cancel, so we'll need
 	// additional goroutine to map cancellation to Shutdown() call
-	tasks.Start("http server shutdowner", httpShutdownTask(srv))
+	tasks.Start("http server shutdowner", httputils.ServerShutdownTask(srv))
 
 	return tasks.Wait()
-}
-
-// helper for making HTTP shutdown task. Go's http.Server is weird that we cannot use
-// context cancellation to stop it, but instead we have to call srv.Shutdown()
-func httpShutdownTask(server *http.Server) func(context.Context, string) error {
-	return func(ctx context.Context, _ string) error {
-		<-ctx.Done()
-		// can't use task ctx b/c it'd cancel the Shutdown() itself
-		return server.Shutdown(context.Background())
-	}
-}
-
-func removeGracefulServerClosedError(httpServerError error) error {
-	if httpServerError == http.ErrServerClosed {
-		return nil
-	} else {
-		// some other error
-		// (or nil, but http server should always exit with non-nil error)
-		return httpServerError
-	}
 }
