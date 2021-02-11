@@ -21,6 +21,7 @@ import (
 	"github.com/function61/gokit/cryptoutil"
 	"github.com/function61/gokit/jsonfile"
 	"github.com/function61/gokit/logex"
+	"github.com/function61/lambda-alertmanager/pkg/alertmanagerclient"
 	"github.com/go-acme/lego/v3/certificate"
 	"github.com/go-acme/lego/v3/lego"
 	legolog "github.com/go-acme/lego/v3/log"
@@ -62,7 +63,9 @@ func renew(ctx context.Context, id string) error {
 }
 
 func listRenewable(ctx context.Context, after time.Time, renewFirst bool) error {
-	certs, err := certbus.ResolveRealtimeState(ctx, readTenantCtx(), nil)
+	tenantCtx := readTenantCtx()
+
+	certs, err := certbus.ResolveRealtimeState(ctx, tenantCtx, nil)
 	if err != nil {
 		return err
 	}
@@ -78,6 +81,23 @@ func listRenewable(ctx context.Context, after time.Time, renewFirst bool) error 
 
 		if renewFirst && idx == 0 {
 			if err := renewCertificate(ctx, cert); err != nil {
+				return err
+			}
+		}
+	}
+
+	if renewFirst {
+		conf, err := decryptConfig(certs)
+		if err != nil {
+			return fmt.Errorf("decryptConfig: %w", err)
+		}
+
+		if conf.AlertManagerBaseurl != "" {
+			if err := alertmanagerclient.New(conf.AlertManagerBaseurl).DeadMansSwitchCheckin(
+				ctx,
+				"CertBus "+tenantCtx.Stream(certificatestore.Stream),
+				48*time.Hour,
+			); err != nil {
 				return err
 			}
 		}

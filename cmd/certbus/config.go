@@ -21,7 +21,8 @@ import (
 type config struct {
 	LetsEncrypt           letsEncryptAccount    `json:"lets_encrypt"`
 	CloudflareCredentials cloudflareCredentials `json:"cloudflare_credentials"`
-	KekPublicKey          string                `json:"kek_public_key"` // used to encrypt certs' private keys
+	KekPublicKey          string                `json:"kek_public_key"`       // used to encrypt certs' private keys
+	AlertManagerBaseurl   string                `json:"alertmanager_baseurl"` // (optional) alertmanager integration
 }
 
 func displayConfig(ctx context.Context, out io.Writer) error {
