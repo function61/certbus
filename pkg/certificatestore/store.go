@@ -122,15 +122,24 @@ func (c *Store) processEvent(ev ehevent.Event) error {
 		// events adding two items to the list. double is natural due to renewals
 		c.removeCertById(cert.Id)
 
-		for _, domain := range cert.Domains {
-			c.byHostname[domain] = cert
-		}
-
 		c.certificates = append(c.certificates, cert)
+
+		c.rebuildByHostname()
 	case *cbdomain.CertificateRemoved:
 		c.logl.Info.Printf("CertificateRemoved id=%s", e.Id)
 
 		c.removeCertById(e.Id)
+
+		// we could just delete each cert.Domains from c.byHostname here and have better perf,
+		// but that doesn't take into account this case:
+		//
+		//   1. CertificateObtained (domains=example.com, www.example.com)
+		//   2. CertificateObtained (domains=example.com, *.example.com)
+		//   3. CertificateRemoved (domains=example.com, www.example.com)
+		//
+		// in this case example.com wouldn't have a cert in byHostname. i.e obtaining wildcard before
+		// decommissioning old ManagedCertificate
+		c.rebuildByHostname()
 	case *cbdomain.ConfigUpdated:
 		c.logl.Info.Println("ConfigUpdated")
 
@@ -150,10 +159,16 @@ func (c *Store) removeCertById(id string) {
 
 		c.certificates = append(c.certificates[:idx], c.certificates[idx+1:]...)
 
-		for _, domain := range cert.Domains {
-			delete(c.byHostname, domain)
-		}
-
 		break
+	}
+}
+
+func (c *Store) rebuildByHostname() {
+	c.byHostname = map[string]*ManagedCertificate{}
+
+	for _, cert := range c.certificates {
+		for _, domain := range cert.Domains {
+			c.byHostname[domain] = cert
+		}
 	}
 }

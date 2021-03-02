@@ -55,6 +55,39 @@ func TestCertificateRemoval(t *testing.T) {
 	assert.Assert(t, certs.ByHostname("prod4.fn61.net") == nil)
 }
 
+func TestWildcardCertificateObtainBeforeRemovingParallelNonWildcard(t *testing.T) {
+	certs, t0 := setupCommon(t)
+
+	obtainCertificate := func(idx string, domains ...string) { // dummy values
+		pumpEvents(t, certs, cbdomain.NewCertificateObtained(
+			idx,
+			"new",
+			domains,
+			t0,
+			exampleCert,
+			"dummyHash"+idx,
+			[]byte("dummyPrivKey"+idx),
+			ehevent.MetaSystemUser(t0)))
+	}
+
+	// we now have non-wildcard
+	obtainCertificate("1", "example.com", "www.example.com")
+
+	// we decided we need wildcard, but don't want to cause downtime and remove old cert before
+	// our wildcard is active
+	obtainCertificate("2", "example.com", "*.example.com")
+
+	// latest wins
+	assert.EqualString(t, certs.ByHostname("example.com").Id, "2")
+
+	pumpEvents(t, certs, cbdomain.NewCertificateRemoved(
+		"1",
+		ehevent.MetaSystemUser(t0)))
+
+	// wildcard still works after removing non-wildcarded one
+	assert.EqualString(t, certs.ByHostname("example.com").Id, "2")
+}
+
 func TestGetLatestEncryptedConfig(t *testing.T) {
 	certs, _ := setupCommon(t)
 
