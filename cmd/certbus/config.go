@@ -15,7 +15,7 @@ import (
 	"github.com/function61/eventhorizon/pkg/ehevent"
 	"github.com/function61/gokit/cryptoutil"
 	"github.com/function61/gokit/jsonfile"
-	"github.com/go-acme/lego/v3/registration"
+	"github.com/go-acme/lego/v4/registration"
 )
 
 type config struct {
