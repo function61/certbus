@@ -6,17 +6,6 @@ it belongs: not inside the loadbalancer.
 
 ![CertBus's architecture](docs/architecture.png)
 
-Contents:
-
-- [Why?](#why)
-- [How](#how)
-- [Installation](#installation)
-- [Certificate management](#certificate-management)
-  * [Issuance](#issuance)
-  * [Automatic renewal](#automatic-renewal)
-  * [Manual renewal](#manual-renewal)
-  * [Removal](#removal)
-
 
 Why?
 ----
