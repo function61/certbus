@@ -33,6 +33,7 @@ I don't like the above approach for these reasons:
 - Loadbalancer needs a
   [stateful store](https://github.com/mholt/certmagic/wiki/Storage-Implementations)
   to keep track of the ever-changing certs
+- Multiple loadbalancers need coordination so two loadbalancers don't try to renew the same certificate at the same time
 - Loadbalancer needs your LetsEncrypt (or some other ACME service) credentials
 - Loadbalancer needs your DNS credentials if you need private (think intranet) services
     * You need DNS solver because ACME can't verify your domain ownership via HTTP solver for private services
@@ -83,7 +84,9 @@ Installation
 Certificate management
 ----------------------
 
-These steps are done from CertBus-manager.
+These steps are done from CertBus-manager. (You can have scheduled CertBus-manager running on AWS Lambda,
+and you can also manage certificates manually from CLI from your own computer. They both just connect
+to the same event bus.)
 
 Let's run through a certificate management lifecycle:
 
