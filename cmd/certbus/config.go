@@ -21,8 +21,14 @@ import (
 type config struct {
 	LetsEncrypt           letsEncryptAccount    `json:"lets_encrypt"`
 	CloudflareCredentials cloudflareCredentials `json:"cloudflare_credentials"`
-	KekPublicKey          string                `json:"kek_public_key"`       // used to encrypt certs' private keys
-	AlertManagerBaseurl   string                `json:"alertmanager_baseurl"` // (optional) alertmanager integration
+	KekPublicKey          string                `json:"kek_public_key"`                   // used to encrypt certs' private keys
+	AlertManagerBaseurl   string                `json:"alertmanager_baseurl,omitempty"`   // (optional) alertmanager integration
+	AcmeHTTP01Challenges  *acmeHTTP01Challenges `json:"acme_http01_challenges,omitempty"` // (optional) bucket to upload HTTP-01 challenges to
+}
+
+type acmeHTTP01Challenges struct {
+	Bucket string `json:"bucket"`
+	Region string `json:"region"` // e.g. "us-east-1"
 }
 
 func displayConfig(ctx context.Context, out io.Writer) error {

@@ -38,6 +38,7 @@ func NewCertificateObtained(
 	certPemBundle string,
 	privateKeyDekFingerprint string,
 	privateKeyCiphertext []byte,
+	challengeType string,
 	meta ehevent.EventMeta,
 ) *CertificateObtained {
 	return &CertificateObtained{
@@ -49,6 +50,7 @@ func NewCertificateObtained(
 		CertPemBundle:            certPemBundle,
 		PrivateKeyDekFingerprint: privateKeyDekFingerprint,
 		PrivateKeyCiphertext:     privateKeyCiphertext,
+		ChallengeType:            challengeType,
 	}
 }
 

@@ -11,6 +11,7 @@ import (
 	"github.com/function61/gokit/aws/lambdautils"
 	"github.com/function61/gokit/dynversion"
 	"github.com/function61/gokit/osutil"
+	"github.com/go-acme/lego/v4/challenge"
 	"github.com/spf13/cobra"
 )
 
@@ -105,6 +106,7 @@ func listEntry() *cobra.Command {
 func mkEntry() *cobra.Command {
 	wildcard := false
 	subdomain := false
+	dns := true
 
 	cmd := &cobra.Command{
 		Use:   "mk [domain]",
@@ -115,6 +117,14 @@ func mkEntry() *cobra.Command {
 				panic("cannot apply both wildcard and subdomain certificate at the same time")
 			}
 
+			challengeType := func() challenge.Type {
+				if dns {
+					return challenge.DNS01
+				} else {
+					return challenge.HTTP01
+				}
+			}()
+
 			createCert := newBasicCertificate
 			if subdomain {
 				createCert = newSubdomainCertificate
@@ -123,12 +133,16 @@ func mkEntry() *cobra.Command {
 				createCert = newWildcardCertificate
 			}
 
-			osutil.ExitIfError(createCert(osutil.CancelOnInterruptOrTerminate(nil), args[0]))
+			osutil.ExitIfError(createCert(
+				osutil.CancelOnInterruptOrTerminate(nil),
+				args[0],
+				challengeType))
 		},
 	}
 
 	cmd.Flags().BoolVarP(&wildcard, "wildcard", "", wildcard, "Create wildcard certificate, please take care you don't have wildcard CNAME (mutually exclusive with --subdomain)")
 	cmd.Flags().BoolVarP(&subdomain, "subdomain", "", subdomain, "Create subdomain certificate (no 'www.' prefix)")
+	cmd.Flags().BoolVarP(&dns, "dns", "", dns, "Use DNS-01 challenge")
 
 	return cmd
 }

@@ -79,6 +79,7 @@ Installation
 2. [Configure CertBus manager](docs/configure-manager.md)
 3. [Test the example server using CertBus](docs/test-example-server.md)
     * Once it works, use the example code to integrate with your loadbalancer
+4. (optional) [Using HTTP-01 challenge](docs/using-http-01-challenge.md)
 
 
 Certificate management

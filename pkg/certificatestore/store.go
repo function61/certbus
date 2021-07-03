@@ -116,6 +116,7 @@ func (c *Store) processEvent(ev ehevent.Event) error {
 					Ciphertext:     e.PrivateKeyCiphertext,
 				},
 			},
+			ChallengeType: e.ChallengeType,
 		}
 
 		// since we'll append the cert to a list, we don't want 2x CertificateObtained

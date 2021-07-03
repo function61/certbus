@@ -17,12 +17,14 @@ import (
 	"github.com/function61/certbus/pkg/encryptedbox"
 	"github.com/function61/eventhorizon/pkg/ehevent"
 	"github.com/function61/eventhorizon/pkg/ehreader"
+	"github.com/function61/gokit/aws/s3facade"
 	"github.com/function61/gokit/cryptorandombytes"
 	"github.com/function61/gokit/cryptoutil"
 	"github.com/function61/gokit/jsonfile"
 	"github.com/function61/gokit/logex"
 	"github.com/function61/lambda-alertmanager/pkg/alertmanagerclient"
 	"github.com/go-acme/lego/v4/certificate"
+	"github.com/go-acme/lego/v4/challenge"
 	"github.com/go-acme/lego/v4/lego"
 	legolog "github.com/go-acme/lego/v4/log"
 	"github.com/go-acme/lego/v4/providers/dns/cloudflare"
@@ -115,12 +117,13 @@ func list(ctx context.Context) error {
 	}
 
 	tbl := termtables.CreateTable()
-	tbl.AddHeaders("Id", "Expires", "Domains")
+	tbl.AddHeaders("Id", "Expires", "Challenge", "Domains")
 
 	for _, cert := range certs.All() {
 		tbl.AddRow(
 			cert.Id,
 			cert.Certificate.NotAfter.Format(time.RFC3339),
+			cert.ChallengeType,
 			strings.Join(cert.Domains, ", "))
 	}
 
@@ -163,20 +166,54 @@ func readTenantCtx() ehreader.TenantCtx {
 	return *client
 }
 
-func newBasicCertificate(ctx context.Context, domain string) error {
-	return newCertificateInternal(ctx, []string{"www." + domain, domain}, newCertId(), "new")
+func newBasicCertificate(ctx context.Context, domain string, challengeType challenge.Type) error {
+	return newCertificateInternal(
+		ctx,
+		[]string{"www." + domain, domain},
+		newCertId(),
+		"new",
+		challengeType)
 }
 
-func newSubdomainCertificate(ctx context.Context, domain string) error {
-	return newCertificateInternal(ctx, []string{domain}, newCertId(), "new")
+func newSubdomainCertificate(ctx context.Context, domain string, challengeType challenge.Type) error {
+	return newCertificateInternal(
+		ctx,
+		[]string{domain},
+		newCertId(),
+		"new",
+		challengeType)
 }
 
-func newWildcardCertificate(ctx context.Context, domain string) error {
-	return newCertificateInternal(ctx, []string{"*." + domain, domain}, newCertId(), "new")
+func newWildcardCertificate(ctx context.Context, domain string, challengeType challenge.Type) error {
+	return newCertificateInternal(
+		ctx,
+		[]string{"*." + domain, domain},
+		newCertId(),
+		"new",
+		challengeType)
 }
 
 func renewCertificate(ctx context.Context, expiringCert certificatestore.ManagedCertificate) error {
-	return newCertificateInternal(ctx, expiringCert.Domains, expiringCert.Id, "renewal")
+	challengeType, err := func() (challenge.Type, error) {
+		switch expiringCert.ChallengeType {
+		case challenge.DNS01.String(), "": // old events didn't record challenge type
+			return challenge.DNS01, nil
+		case challenge.HTTP01.String():
+			return challenge.HTTP01, nil
+		default:
+			return "", fmt.Errorf("unknown challengeType: %s", expiringCert.ChallengeType)
+		}
+	}()
+	if err != nil {
+		return err
+	}
+
+	return newCertificateInternal(
+		ctx,
+		expiringCert.Domains,
+		expiringCert.Id,
+		"renewal",
+		challengeType)
 }
 
 func newCertificateInternal(
@@ -184,6 +221,7 @@ func newCertificateInternal(
 	domains []string,
 	certId string,
 	reason string,
+	challengeType challenge.Type,
 ) error {
 	tenantCtx := readTenantCtx()
 
@@ -197,7 +235,7 @@ func newCertificateInternal(
 		return fmt.Errorf("decryptConfig: %w", err)
 	}
 
-	legoClient, err := makeLegoClient(*conf)
+	legoClient, err := makeLegoClient(*conf, challengeType)
 	if err != nil {
 		return err
 	}
@@ -218,6 +256,7 @@ func newCertificateInternal(
 		domains,
 		[]byte(conf.KekPublicKey),
 		reason,
+		challengeType,
 	)
 	if err != nil {
 		return err
@@ -230,7 +269,7 @@ func newCertificateInternal(
 	return err
 }
 
-func makeLegoClient(conf config) (*lego.Client, error) {
+func makeLegoClient(conf config, challengeType challenge.Type) (*lego.Client, error) {
 	adapter, err := conf.LetsEncrypt.ToLegoInterface()
 	if err != nil {
 		return nil, err
@@ -247,20 +286,42 @@ func makeLegoClient(conf config) (*lego.Client, error) {
 		return nil, errors.New("LetsEncrypt registration empty")
 	}
 
-	// ugly hack, but one can only deliver these via ENV vars
-	os.Setenv("CLOUDFLARE_EMAIL", conf.CloudflareCredentials.Email)
-	os.Setenv("CLOUDFLARE_API_KEY", conf.CloudflareCredentials.ApiKey)
+	switch challengeType {
+	case challenge.DNS01:
+		cloudflareProvider, err := cloudflare.NewDNSProviderConfig(&cloudflare.Config{
+			AuthEmail: conf.CloudflareCredentials.Email,
+			AuthKey:   conf.CloudflareCredentials.ApiKey,
+		})
+		if err != nil {
+			return nil, err
+		}
 
-	cloudflareProvider, err := cloudflare.NewDNSProvider()
-	if err != nil {
-		return nil, err
+		if err := legoClient.Challenge.SetDNS01Provider(cloudflareProvider); err != nil {
+			return nil, err
+		}
+
+		return legoClient, nil
+	case challenge.HTTP01:
+		if conf.AcmeHTTP01Challenges == nil {
+			return nil, errors.New("cannot use HTTP-01 due to missing configuration")
+		}
+
+		validationsBucket, err := s3facade.Bucket(
+			conf.AcmeHTTP01Challenges.Bucket,
+			nil, // use AWS-SDK built-in credentials resolving so this works with Lambda roles
+			conf.AcmeHTTP01Challenges.Region)
+		if err != nil {
+			return nil, err
+		}
+
+		if err := legoClient.Challenge.SetHTTP01Provider(&bucketChallengeUploader{validationsBucket}); err != nil {
+			return nil, err
+		}
+
+		return legoClient, nil
+	default:
+		return nil, fmt.Errorf("unimplemented challenge: %s", challengeType)
 	}
-
-	if err := legoClient.Challenge.SetDNS01Provider(cloudflareProvider); err != nil {
-		return nil, err
-	}
-
-	return legoClient, nil
 }
 
 func makeCertificateObtainedEvent(
@@ -269,6 +330,7 @@ func makeCertificateObtainedEvent(
 	domains []string,
 	publicKey []byte,
 	reason string,
+	challengeType challenge.Type,
 ) (*cbdomain.CertificateObtained, error) {
 	certParsed, err := cryptoutil.ParsePemX509Certificate(certAndPrivateKey.Certificate)
 	if err != nil {
@@ -293,6 +355,7 @@ func makeCertificateObtainedEvent(
 		string(certAndPrivateKey.Certificate),
 		privateKeyEncrypted.KeyFingerprint,
 		privateKeyEncrypted.Ciphertext,
+		challengeType.String(),
 		ehevent.MetaSystemUser(time.Now()),
 	), nil
 }

@@ -67,6 +67,7 @@ func TestWildcardCertificateObtainBeforeRemovingParallelNonWildcard(t *testing.T
 			exampleCert,
 			"dummyHash"+idx,
 			[]byte("dummyPrivKey"+idx),
+			"dummyChallengeType",
 			ehevent.MetaSystemUser(t0)))
 	}
 
@@ -118,6 +119,7 @@ func setupCommon(t *testing.T) (*Store, time.Time) {
 			exampleCert,
 			"SHA256:wupoCrsM0GYWNWLwcBEDZZSe4ToLaxcuCWAgOiTsFCA", // of exampleCertsKek
 			exampleCertPrivateKeyEncryptedWithExampleKek,
+			"dummyChallengeType",
 			ehevent.MetaSystemUser(t0)),
 		cbdomain.NewConfigUpdated(
 			"encryptionKeyFingerprint",

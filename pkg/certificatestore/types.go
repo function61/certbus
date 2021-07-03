@@ -9,10 +9,11 @@ import (
 )
 
 type ManagedCertificate struct {
-	Id          string   `json:"id"`
-	Domains     []string `json:"domains"` // when wildcard: ["*.domain", "domain"]
-	RenewAt     time.Time
-	Certificate CertDetails `json:"certificate"`
+	Id            string      `json:"id"`
+	Domains       []string    `json:"domains"` // when wildcard: ["*.domain", "domain"]
+	RenewAt       time.Time   `json:"renew_at"`
+	Certificate   CertDetails `json:"certificate"`
+	ChallengeType string      `json:"challenge_type"`
 }
 
 type CertDetails struct {
