@@ -127,7 +127,7 @@ func mkEntry() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&wildcard, "wildcard", "", wildcard, "Create wildcard certificate")
+	cmd.Flags().BoolVarP(&wildcard, "wildcard", "", wildcard, "Create wildcard certificate, please take care you don't have wildcard CNAME (mutually exclusive with --subdomain)")
 	cmd.Flags().BoolVarP(&subdomain, "subdomain", "", subdomain, "Create subdomain certificate (no 'www.' prefix)")
 
 	return cmd
