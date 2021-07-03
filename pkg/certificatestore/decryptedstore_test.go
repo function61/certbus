@@ -37,7 +37,7 @@ func TestDecryptedStore(t *testing.T) {
 	// cache misses (that still find cert via wildcard lookup) still increase calls ..
 	cert, err = DecryptedByHostnameSupportingWildcard("bar.prod4.fn61.net", decryptedStore)
 	assert.Ok(t, err)
-	//nolint:staticcheck (false positive)
+	//nolint:staticcheck
 	assert.Assert(t, cert != nil)
 
 	assert.Assert(t, byHostnameCalls.calls == 2)
