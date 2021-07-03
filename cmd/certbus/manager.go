@@ -289,10 +289,11 @@ func makeLegoClient(conf config, challengeType challenge.Type) (*lego.Client, er
 
 	switch challengeType {
 	case challenge.DNS01:
-		cloudflareProvider, err := cloudflare.NewDNSProviderConfig(&cloudflare.Config{
-			AuthEmail: conf.CloudflareCredentials.Email,
-			AuthKey:   conf.CloudflareCredentials.ApiKey,
-		})
+		cfConf := cloudflare.NewDefaultConfig() // sets important fields (like TTL)
+		cfConf.AuthEmail = conf.CloudflareCredentials.Email
+		cfConf.AuthKey = conf.CloudflareCredentials.ApiKey
+
+		cloudflareProvider, err := cloudflare.NewDNSProviderConfig(cfConf)
 		if err != nil {
 			return nil, err
 		}
