@@ -194,6 +194,7 @@ func newWildcardCertificate(ctx context.Context, domain string, challengeType ch
 }
 
 func renewCertificate(ctx context.Context, expiringCert certificatestore.ManagedCertificate) error {
+	// we need to renew the cert using the same challenge type that we used before with this certificate
 	challengeType, err := func() (challenge.Type, error) {
 		switch expiringCert.ChallengeType {
 		case challenge.DNS01.String(), "": // old events didn't record challenge type

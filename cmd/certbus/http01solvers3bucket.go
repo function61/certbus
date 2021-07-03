@@ -10,7 +10,7 @@ import (
 	"github.com/go-acme/lego/v4/challenge"
 )
 
-// presents a ACME challenge token on a webserver by writing it in an S3 bucket
+// presents an ACME challenge token on a webserver by writing it to a S3 bucket
 type bucketChallengeUploader struct {
 	challengesBucket *s3facade.BucketContext
 }
