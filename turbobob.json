@@ -13,7 +13,11 @@
 			"commands": {
 				"build": ["bin/build.sh"],
 				"dev": ["bash"]
-			}
+			},
+			"dev_shell_commands": [
+				{ "command": "source enckeys_and_envs/env-prod.env", "important": true },
+				{ "command": "rel/certbus_linux-amd64 cert ls", "important": true }
+			]
 		},
 		{
 			"name": "publisher",
