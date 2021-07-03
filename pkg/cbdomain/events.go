@@ -24,6 +24,7 @@ type CertificateObtained struct {
 	CertPemBundle            string
 	PrivateKeyDekFingerprint string // identity of the DEK that encrypted this private key
 	PrivateKeyCiphertext     []byte
+	ChallengeType            string // "http-01" | "dns-01" | ...
 }
 
 func (e *CertificateObtained) MetaType() string         { return "CertificateObtained" }
