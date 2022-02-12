@@ -11,7 +11,7 @@
 			"mount_destination": "/workspace",
 			"workdir": "/workspace",
 			"commands": {
-				"build": ["bin/build.sh"],
+				"build": ["build-go-project.sh", "--directory=cmd/certbus/", "--binary-basename=certbus"],
 				"dev": ["bash"]
 			},
 			"dev_shell_commands": [
